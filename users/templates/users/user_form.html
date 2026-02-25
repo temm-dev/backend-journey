@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% if action %}{{ action }}{% else %}Создание{% endif %} пользователя</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        form { max-width: 400px; }
+        label { display: block; margin-top: 10px; }
+        input[type="text"], input[type="email"], input[type="number"] { width: 100%; padding: 5px; }
+        .helptext { font-size: 0.9em; color: #666; }
+        .btn { margin-top: 15px; padding: 8px 15px; background: #007bff; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>{% if action %}{{ action }}{% else %}Создание{% endif %} пользователя</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn">Сохранить</button>
+    </form>
+    <p><a href="{% url 'user_list' %}">Вернуться к списку</a></p>
+</body>
+</html>
