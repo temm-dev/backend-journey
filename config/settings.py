@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,6 +28,23 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Celery Configuration
+CELERY_BROKER_URL = 'redis://localhost:6379/0'  # URL брокера (Redis)
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'  # Хранилище результатов (можно также 'django-db' через django-celery-results)
+
+# Если хочешь хранить результаты в БД Django, установи:
+# CELERY_RESULT_BACKEND = 'django-db'
+# и добавь 'django_celery_results' в INSTALLED_APPS
+
+# Настройки сериализации (рекомендуется использовать json)
+CELERY_BROKER_URL = config('REDIS_URL', default='redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = config('REDIS_URL', default='redis://localhost:6379/0')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Europe/Moscow'  # или твой часовой пояс
+
+
 
 # Application definition
 
@@ -38,6 +56,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
+    'django_celery_results',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -81,7 +101,7 @@ DATABASES = {
 }
 
 # Настройки DynamoDB (используем локальную версию)
-DYNAMODB_HOST = 'http://localhost:8000'  # если у вас запущен DynamoDB Local
+DYNAMODB_HOST = 'http://localhost:8002'  # если у вас запущен DynamoDB Local
 AWS_ACCESS_KEY_ID = 'dummy'              # для локальной версии подойдут dummy
 AWS_SECRET_ACCESS_KEY = 'dummy'
 AWS_REGION = 'us-east-1'
